@@ -19,6 +19,8 @@ const werStreamtAddon = createWorkerAddon({
 werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   console.log("source", input);
 
+  await ctx.requestCache(input.ids.imdb_id);
+
   const queryJson = await fetch(
     `https://www.werstreamt.es/suche/suggestTitle?term=${input.ids.imdb_id}`
   ).then((resp) => resp.json());
