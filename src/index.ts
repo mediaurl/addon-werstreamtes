@@ -1,6 +1,9 @@
 import { createWorkerAddon, runCli } from "@watchedcom/sdk";
 import { getSources, extractUrl } from "./scraper";
 import fetch from "node-fetch";
+import { from } from "rxjs";
+import { flatMap, toArray } from "rxjs/operators";
+import { removeQuery } from "./helpers";
 
 const werStreamtAddon = createWorkerAddon({
   id: "wer-streamt-es",
@@ -33,7 +36,23 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   const resp = await fetch(itemUrl);
   const html = await resp.text();
 
-  return getSources(html);
+  const sources = await getSources(html);
+
+  const resolvedSources = await from(sources)
+    .pipe(
+      flatMap(async (source) => {
+        const targetUrl = await fetch(source.url)
+          .then((resp) => resp.url)
+          .then(removeQuery);
+        source.url = targetUrl as string;
+
+        return source;
+      }, 4),
+      toArray()
+    )
+    .toPromise();
+
+  return resolvedSources;
 });
 
 runCli([werStreamtAddon]);
