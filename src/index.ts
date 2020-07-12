@@ -41,8 +41,16 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   const resolvedSources = await from(sources)
     .pipe(
       flatMap(async (source) => {
-        const targetUrl = await fetch(source.url)
-          .then((resp) => resp.url)
+        /**
+         * Memory leak bug, details:
+         * https://github.com/node-fetch/node-fetch/issues/83
+         */
+        const targetUrl = await fetch(source.url, { method: "HEAD" })
+          .then(async (resp) => {
+            // const body = await resp.text()
+
+            return resp.url;
+          })
           .then(removeQuery);
         source.url = targetUrl as string;
 
