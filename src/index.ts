@@ -56,7 +56,7 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
         source.url = targetUrl as string;
 
         const { hostname } = url.parse(targetUrl);
-        source.icon = `https://www.google.com/s2/favicons?sz=64&domain_url=${hostname}`;
+        source.icon = `https://www.google.com/s2/favicons?domain_url=${hostname}`;
 
         return source;
       }, 4),
