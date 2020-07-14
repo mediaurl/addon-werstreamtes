@@ -1,3 +1,4 @@
+import * as url from "url";
 import { createWorkerAddon, runCli } from "@watchedcom/sdk";
 import { getSources, extractUrl } from "./scraper";
 import fetch from "node-fetch";
@@ -53,6 +54,9 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
           })
           .then(removeQuery);
         source.url = targetUrl as string;
+
+        const { hostname } = url.parse(targetUrl);
+        source.icon = `https://www.google.com/s2/favicons?sz=64&domain_url=${hostname}`;
 
         return source;
       }, 4),
