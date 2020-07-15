@@ -48,7 +48,7 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
          */
         const targetUrl = await fetch(source.url, { method: "HEAD" })
           .then(async (resp) => {
-            // const body = await resp.text()
+            const body = await resp.text();
 
             return resp.url;
           })
