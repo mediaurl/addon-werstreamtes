@@ -1,10 +1,11 @@
 import * as url from "url";
 import { createWorkerAddon, runCli } from "@watchedcom/sdk";
-import { getSources, extractUrl } from "./scraper";
 import fetch from "node-fetch";
 import { from } from "rxjs";
 import { flatMap, toArray } from "rxjs/operators";
+import { getSources, extractUrl } from "./scraper";
 import { removeQuery } from "./helpers";
+import { followAllRedirects } from "./utils/url-resolver";
 
 const werStreamtAddon = createWorkerAddon({
   id: "wer-streamt-es",
@@ -42,17 +43,10 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   const resolvedSources = await from(sources)
     .pipe(
       flatMap(async (source) => {
-        /**
-         * Memory leak bug, details:
-         * https://github.com/node-fetch/node-fetch/issues/83
-         */
-        const targetUrl = await fetch(source.url, { method: "HEAD" })
-          .then(async (resp) => {
-            const body = await resp.text();
+        const targetUrl = await followAllRedirects(source.url, {
+          includingMeta: true,
+        });
 
-            return resp.url;
-          })
-          .then(removeQuery);
         source.url = targetUrl as string;
 
         const { hostname } = url.parse(targetUrl);
