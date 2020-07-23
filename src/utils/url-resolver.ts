@@ -10,7 +10,10 @@ export const followAllRedirects = async (
     includingMeta: boolean;
   }
 ) => {
-  const resp = await fetch(inputUrl, { method: "GET", follow: 10 });
+  const resp = await fetch(inputUrl, {
+    method: includingMeta ? "GET" : "HEAD",
+    follow: 10,
+  });
   const body = await resp.text();
   const targetUrl = resp.url;
 
