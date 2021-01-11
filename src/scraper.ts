@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { Source } from "@watchedcom/sdk";
+import { Source } from "@mediaurl/sdk";
 import * as url from "url";
 
 const baseUrl = "https://www.werstreamt.es/";

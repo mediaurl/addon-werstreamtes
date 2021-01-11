@@ -1,5 +1,5 @@
 import * as url from "url";
-import { createWorkerAddon, runCli } from "@watchedcom/sdk";
+import { createWorkerAddon, runCli } from "@mediaurl/sdk";
 import fetch from "node-fetch";
 import { from } from "rxjs";
 import { flatMap, toArray } from "rxjs/operators";
