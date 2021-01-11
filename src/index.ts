@@ -22,9 +22,10 @@ const werStreamtAddon = createWorkerAddon({
 });
 
 werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
-  console.log("source", input);
-
-  await ctx.requestCache(input.ids.imdb_id);
+  await ctx.requestCache(input.ids.imdb_id, {
+    ttl: Infinity,
+    refreshInterval: "1d",
+  });
 
   const queryJson = await fetch(
     `https://www.werstreamt.es/suche/suggestTitle?term=${input.ids.imdb_id}`
@@ -61,4 +62,4 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   return resolvedSources;
 });
 
-runCli([werStreamtAddon]);
+runCli([werStreamtAddon], { singleMode: true });
