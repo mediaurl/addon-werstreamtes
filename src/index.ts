@@ -15,7 +15,7 @@ const werStreamtAddon = createWorkerAddon({
   version: "0.0.0",
   itemTypes: ["movie", "series"],
   icon: "https://www.werstreamt.es/favicon.ico",
-  requestArgs: [
+  triggers: [
     "imdb_id",
     // "tmdb_id"
   ],
