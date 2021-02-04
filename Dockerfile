@@ -10,6 +10,7 @@ WORKDIR /code
 COPY package.json package-lock.json ./
 RUN npm ci --production
 RUN npm i @mediaurl/redis-cache @mediaurl/sql-cache
+RUN test $(find node_modules/@mediaurl -name sdk -type d | tee /dev/stderr | wc -l) -eq 1 ||     (echo "More than one @mediaurl/sdk module is installed"; exit 1)
 
 FROM node:14-alpine
 WORKDIR /code
