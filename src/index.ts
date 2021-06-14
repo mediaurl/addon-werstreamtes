@@ -1,13 +1,11 @@
-import * as url from "url";
-import { createWorkerAddon, runCli } from "@mediaurl/sdk";
-import fetch from "node-fetch";
+import { createAddon, runCli } from "@mediaurl/sdk";
 import { from } from "rxjs";
 import { flatMap, toArray } from "rxjs/operators";
-import { getSources, extractUrl } from "./scraper";
-import { removeQuery } from "./helpers";
+import * as url from "url";
+import { extractUrl, getSources } from "./scraper";
 import { followAllRedirects } from "./utils/url-resolver";
 
-const werStreamtAddon = createWorkerAddon({
+const werStreamtAddon = createAddon({
   id: "wer-streamt-es",
   name: "Wer streamt es?",
   description:
@@ -27,9 +25,11 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   //   refreshInterval: "1d",
   // });
 
-  const queryJson = await ctx.fetch(
-    `https://www.werstreamt.es/suche/suggestTitle?term=${input.ids.imdb_id}`
-  ).then((resp) => resp.json());
+  const queryJson = await ctx
+    .fetch(
+      `https://www.werstreamt.es/suche/suggestTitle?term=${input.ids.imdb_id}`
+    )
+    .then((resp) => resp.json());
   const itemUrl = extractUrl(queryJson);
 
   if (!itemUrl) {
