@@ -5,7 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node .",
-    "develop": "ts-node-dev --transpileOnly --no-notify src",
+    "develop": "ts-node-dev --transpile-only --no-notify src",
     "test": "jest test/"
   },
   "dependencies": {
