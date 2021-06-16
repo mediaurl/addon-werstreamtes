@@ -3,7 +3,10 @@ import { from } from "rxjs";
 import { flatMap, toArray } from "rxjs/operators";
 import * as url from "url";
 import { extractUrl, getSources } from "./scraper";
-import { followAllRedirects } from "./utils/url-resolver";
+import {
+  followAllRedirects,
+  followAllRedirectsNew,
+} from "./utils/url-resolver";
 
 const werStreamtAddon = createAddon({
   id: "wer-streamt-es",
@@ -44,9 +47,7 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   const resolvedSources = await from(sources)
     .pipe(
       flatMap(async (source) => {
-        const targetUrl = await followAllRedirects(source.url, {
-          includingMeta: true,
-        });
+        const targetUrl = await followAllRedirectsNew(source.url);
 
         source.url = targetUrl as string;
 
