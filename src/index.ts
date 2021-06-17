@@ -20,10 +20,10 @@ const werStreamtAddon = createAddon({
 });
 
 werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
-  // await ctx.requestCache(input.ids.imdb_id, {
-  //   ttl: Infinity,
-  //   refreshInterval: "1d",
-  // });
+  await ctx.requestCache(input.ids.imdb_id, {
+    ttl: Infinity,
+    refreshInterval: "1d",
+  });
 
   const queryJson = await ctx
     .fetch(
