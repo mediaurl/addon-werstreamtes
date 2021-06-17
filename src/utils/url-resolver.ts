@@ -1,38 +1,32 @@
 import fetch from "node-fetch";
-import * as cheerio from "cheerio";
 import { resolve } from "url";
 
-const followerUrl = process.env.REDIRECT_FOLLOWER_URL;
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import BlockerPlugin from "puppeteer-extra-plugin-block-resources";
 
-export const followAllRedirects = async (
-  inputUrl: string,
-  {
-    includingMeta = false,
-  }: {
-    includingMeta: boolean;
-  }
-) => {
+puppeteer.use(
+  BlockerPlugin({
+    blockedTypes: new Set(["image", "stylesheet", "media", "font"]),
+  })
+);
+puppeteer.use(StealthPlugin());
+
+const followerUrl = process.env.REDIRECT_FOLLOWER_URL;
+const browserlessUrl = process.env.BROWSERLESS_URL;
+
+export const followAllHttpRedirects = async (inputUrl: string) => {
   const resp = await fetch(inputUrl, {
-    method: includingMeta ? "GET" : "HEAD",
+    method: "HEAD",
     follow: 10,
   });
   const body = await resp.text();
   const targetUrl = resp.url;
 
-  if (includingMeta) {
-    const $ = cheerio.load(body, { xmlMode: true });
-    const match = $(`meta[http-equiv='refresh' i]`).first().attr("content");
-
-    if (match) {
-      const nextUrl = resolve(targetUrl, match.split("url=").pop() || "");
-      return followAllRedirects(nextUrl, { includingMeta });
-    }
-  }
-
   return targetUrl;
 };
 
-export const followAllRedirectsNew = async (inputUrl: string) => {
+export const followAllRedirectsGraphQL = async (inputUrl: string) => {
   if (!followerUrl) {
     throw new Error("REDIRECT_FOLLOWER_URL not set");
   }
@@ -55,4 +49,26 @@ export const followAllRedirectsNew = async (inputUrl: string) => {
   const { data } = await resp.json();
 
   return data?.resolveUrl?.url;
+};
+
+export const followAllRedirectsBrowserless = async (inputUrl: string) => {
+  if (!browserlessUrl) {
+    throw new Error("BROWSERLESS_URL not set");
+  }
+
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: process.env.BROWSERLESS_URL,
+  });
+
+  try {
+    const page = await browser.newPage();
+
+    await page.goto(inputUrl);
+
+    const url = page.url();
+
+    return url;
+  } finally {
+    browser.close();
+  }
 };
