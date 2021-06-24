@@ -6,7 +6,7 @@ import { extractUrl, getSources } from "./scraper";
 import { followAllRedirectsBrowserless } from "./utils/url-resolver";
 
 const werStreamtAddon = createAddon({
-  id: "wer-streamt-es",
+  id: "werstreamtes",
   name: "Wer streamt es?",
   description:
     "Wer streamt es? Prüfe die Verfügbarkeit von Filmen bei Netflix, Amazon, Maxdome u.v.m.",
