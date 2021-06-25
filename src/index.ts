@@ -60,4 +60,4 @@ werStreamtAddon.registerActionHandler("source", async (input, ctx) => {
   return resolvedSources;
 });
 
-runCli([werStreamtAddon], { singleMode: true });
+runCli([werStreamtAddon]);
